@@ -29,10 +29,11 @@ public:
         return res;
     }
     
-    
     // Accessor Functions
     float* getPoints() { return points_; }
     Domain1D getDomain() { return domain_; }
+    int getBasisID() { return basisID_; }
+    int getOrder() { return order_; }
     
     ~BSpline() {};
     

@@ -8,7 +8,7 @@
 #define FE1D_h
 
 #include <vector>
-#include <Eigen>
+#include <Eigen/Sparse>
 
 using namespace Eigen;
 

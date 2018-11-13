@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <Group
-      location = "group:../CE507_Coding2/outputs"
+      location = "group:/Users/Damyn/Documents/BYU/BYU Fall 2018/CE 507/CE507_Coding2/CE507_Coding2/outputs"
       name = "outputs">
       <FileRef
          location = "group:B_P2_a2.csv">
