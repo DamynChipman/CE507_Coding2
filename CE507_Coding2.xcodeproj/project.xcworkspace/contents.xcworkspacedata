@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
+   <Group
+      location = "group:../CE507_Coding2/outputs"
+      name = "outputs">
+      <FileRef
+         location = "group:B_P2_a2.csv">
+      </FileRef>
+      <FileRef
+         location = "group:B_P2_a3.csv">
+      </FileRef>
+      <FileRef
+         location = "group:B_P2_a1.csv">
+      </FileRef>
+      <FileRef
+         location = "group:domain.csv">
+      </FileRef>
+   </Group>
    <FileRef
-      location = "self:CE507_Coding2.xcodeproj">
+      location = "self:">
    </FileRef>
 </Workspace>
