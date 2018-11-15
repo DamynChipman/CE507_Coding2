@@ -32,6 +32,7 @@
 		EF54A0FB2183890800772089 /* Domain1D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Domain1D.h; sourceTree = "<group>"; };
 		EFE094F4218A1AC000AF22E1 /* BSpline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BSpline.h; sourceTree = "<group>"; };
 		EFE094F5218A1BA600AF22E1 /* FE1D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FE1D.h; sourceTree = "<group>"; };
+		EFE84DDA219D2A8900B88E6A /* DBSpline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBSpline.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +81,7 @@
 				EF54A0F4218388E900772089 /* main.cpp */,
 				EF54A0FB2183890800772089 /* Domain1D.h */,
 				EFE094F4218A1AC000AF22E1 /* BSpline.h */,
+				EFE84DDA219D2A8900B88E6A /* DBSpline.h */,
 				EFE094F5218A1BA600AF22E1 /* FE1D.h */,
 			);
 			path = CE507_Coding2;

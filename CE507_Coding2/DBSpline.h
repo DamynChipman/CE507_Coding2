@@ -1,22 +1,21 @@
-//   Created by Damyn Chipman on 10/31/18
+//   Created by Damyn Chipman on 11/14/18
 //   github: @camperD
 //   Copyright © 2018 Damyn Chipman. All rights reserved.
-//      FILE:   BSpline.h
+//      FILE:   DBSpline.h
 //   PROJECT:   CE507_Coding2
 
-#ifndef BSpline_h
-#define BSpline_h
+#ifndef DBSpline_h
+#define DBSpline_h
 
 #include <cmath>
 #include <vector>
-#include <Eigen/Dense>
 #include "Domain1D.h"
 
-class BSpline {
+class DBSpline {
     
 public:
     
-    BSpline(int p, int a, int N) : order_(p), basisID_(a), domain_(Domain1D(-1.0, 1.0, N, "edge")), N_(N) {
+    DBSpline(int p, int a, int N) : order_(p), basisID_(a), domain_(Domain1D(-1.0, 1.0, N, "edge")), N_(N) {
         
         // Set up points within domain of BSpline
         points_ = new float[domain_.getN()];
@@ -25,7 +24,7 @@ public:
         }
     };
     
-    BSpline(int p, int a, int NINT, std::vector<float> intPoints) : order_(p), basisID_(a), domain_(Domain1D(-1.0, 1.0, NINT, "edge")), N_(NINT) {
+    DBSpline(int p, int a, int NINT, std::vector<float> intPoints) : order_(p), basisID_(a), domain_(Domain1D(-1.0, 1.0, NINT, "edge")), N_(NINT) {
         
         points_ = new float[NINT];
         for (int i = 0; i < intPoints.size(); i++) {
@@ -33,7 +32,7 @@ public:
         }
     }
     
-    BSpline(int p, float intPoint) : order_(p), N_(p+1) {
+    DBSpline(int p, float intPoint) : order_(p), N_(p+1) {
         
         points_ = new float[p+1];
         for (int i = 0; i < p+1; i++) {
@@ -43,8 +42,8 @@ public:
     }
     
     float eval(float X) {
-        float res = (1.0/(2.0*order_))*(factorial(order_)/(factorial(basisID_ - 1.0) * factorial(order_ + 1.0 - basisID_)));
-        res = res * pow(1 - X, order_ - (basisID_ - 1)) * pow(1 + X, basisID_ - 1);
+        float res = -(pow(1 - X,order_ - basisID_) * pow(1 + X,basisID_ - 2) * (2.0 - 2.0*basisID_ + order_ + order_*X) * factorial(order_));
+        res = res/(2 * order_ * factorial(basisID_ - 1) * factorial(1 - basisID_ + order_));
         return res;
     }
     
@@ -69,7 +68,7 @@ public:
         return vecPoints;
     }
     
-    ~BSpline() {};
+    ~DBSpline() {};
     
 private:
     
@@ -84,4 +83,4 @@ private:
 };
 
 
-#endif /* BSpline_h */
+#endif /* DBSpline_h */

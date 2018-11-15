@@ -33,6 +33,8 @@ public:
         }
     }
     
+    Domain1D() {}
+    
     //
     void chageGridType(std::string newGrid) {
         // TODO: Build this function
