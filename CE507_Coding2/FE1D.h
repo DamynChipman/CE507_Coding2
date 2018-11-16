@@ -10,6 +10,7 @@
 // ----- Necessary Files -----
 #include <vector>
 #include <Eigen/Sparse>
+#include <Eigen/Dense>
 
 // ----- Project Files -----
 #include "BSpline.h"
@@ -20,20 +21,22 @@ using namespace Eigen;
 typedef Eigen::SparseMatrix<float> SpMat;
 typedef Eigen::Triplet<float> tri;
 
-Eigen::VectorXf FE1D(int* ID, int** IEN, int** LM, int p, int Ne, int NINT) {
-    
+//Eigen::VectorXf FE1D(int** LM, int p, float (*k_e_ab)(int,int), float (*f_e_a)(int,int), int NE, int NINT, Eigen::VectorXf w, float del_e) {
+Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, Eigen::VectorXf w, float del_e) {
+
     // Initialize matrices
     std::vector<tri> coefs;
-    Eigen::VectorXf F(Ne);
-    for (int i = 0; i < Ne; i++) {
+    Eigen::VectorXf F(NE);
+    for (int i = 0; i < NE; i++) {
         F(i) = 0;
     }
     
     // Necessary Variables
+    Eigen::MatrixXf k_ab(p+1,p+1);
+    Eigen::VectorXf f_a(p+1);
     
-    
-    // LOOP GOES HERE
-    for (int e = 0; e < Ne; e++) {
+    // ----- Begin Assembly Algorithm -----
+    for (int e = 0; e < NE; e++) {
         for (int i = 0; i < NINT; i++) {
             // Compute Bpi
             BSpline Bpi(p, NINT);
@@ -56,35 +59,32 @@ Eigen::VectorXf FE1D(int* ID, int** IEN, int** LM, int p, int Ne, int NINT) {
             for (int a = 0; a < p+1; a++) {
                 for (int b = 0; b < p+1; b++) {
                     // Compute and update k_e_ab
-                    
+                    k_ab(a,b) = k_ab(a,b) + DNp_vec(a)*DNp_vec(b)*(2.0/del_e)*w(i);
                 }
                 // Compute and update f_e_a
-                
+                //f_a(a) = f_a(a) + Np_vec(a)*f_i*(del_e/2)*w(i);
             }
         }
         for (int a = 0; a < p+1; a++) {
             for (int b = 0; b < p+1; b++) {
                 if (LM[a][e] > -1) {
                     // Compute and update K_LM[a][e]_LM[a][e]
-                    
+                    coefs.push_back(tri(LM[a][e],LM[a][e],k_ab(a,b)));
                 }
             }
             if (LM[a][e] > -1) {
                 // Compute and update F_LM[a][e]
-                
+                F(LM[a][e]) = F(LM[a][e]) + f_a(a);
             }
         }
     }
+    // ----- End Assembly Algorithm -----
     
-    // --------------
-    
-    SpMat K(Ne,Ne);
+    SpMat K(NE,NE);
     K.setFromTriplets(coefs.begin(), coefs.end());
     Eigen::SimplicialCholesky<SpMat> chol(K);
     Eigen::VectorXf d = chol.solve(F);
     return d;
 }
-
-
 
 #endif /* FE1D_h */

@@ -5,8 +5,9 @@
 //   PROJECT:   CE507_Coding2
 
 // ----- GLOBAL VARIABLES -----
-int NNODES = 20;        // Number of nodes per elements
-int NELEM = 4;          // Number of elements
+int NNODES = 20;                     // Number of nodes per elements
+int NELEM = 4;                       // Number of elements
+int N[4] = {10, 100, 1000, 10000};   // Number of elements array
 
 // ----- Necessary Files -----
 #include <iostream>
@@ -43,12 +44,62 @@ using namespace Eigen;
  */
 int main() {
     
+    int n = 0;
+    
     // Verification Testing ========================================================
-    RunVerifications();
+    bool verify = true;
+    if (verify) { cout << "   running verifications..." << endl; RunVerifications(); }
     
     // ID, IEN, and LM Arrays ======================================================
+    cout << "   generating array mappings..." << endl;
     
-    // 
+    // ID array
+    int* ID = new int[N[n]];
+    for (int i = 0; i < N[n]+1; i++) {
+        ID[i] = i;
+    }
+    ID[N[n]] = -1;
+    
+    // IEN array
+    int** IEN = new int*[2];
+    for (int i = 0; i < 2; i++) {
+        IEN[i] = new int[N[n]];
+    }
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < N[n]; j++) {
+            if (i == 0) { IEN[i][j] = ID[j]; }
+            else { IEN[i][j] = ID[j]+1; }
+        }
+    }
+    
+    // LM array
+    int** LM = new int*[2];
+    for (int i = 0; i < 2; i++) {
+        LM[i] = new int[N[n]];
+    }
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < N[n]; j++) {
+            LM[i][j] = ID[IEN[i][j]];
+        }
+    }
+    
+    // Run Assembly Algorithm FE1D ====================================================
+    cout << "   calculating coefs..." << endl;
+    int NE = N[n];                                      // Number of elements
+    float leftBound = 0.0;                              // Left domain bound
+    float rightBound = 1.0;                             // Right domain bound
+    float del_e = (rightBound - leftBound)/(NE + 1.0);  // Element spacing
+    int NINT = 3;                                       // Number of integration points for quadrature
+    Eigen::VectorXf w(NINT);                            // Vector of weights for quadrature
+    w(0) = 5.0/9.0;                                     // Weight 1
+    w(1) = 8.0/9.0;                                     // Weight 2
+    w(2) = 5.0/9.0;                                     // Weight 3
+    int p = 2;                                          // BSpline order
+    
+    Eigen::VectorXf d = FE1D(LM, p, NE, NINT, w, del_e);
+    
+    // Generate solutions ===============================================================
+    cout << "   generating solutions..." << endl;
     
     return 0;
 }

@@ -80,11 +80,11 @@
 			isa = PBXGroup;
 			children = (
 				EF54A0F4218388E900772089 /* main.cpp */,
+				EFE094F5218A1BA600AF22E1 /* FE1D.h */,
 				EFE84DDB219D550A00B88E6A /* Verifications.h */,
 				EF54A0FB2183890800772089 /* Domain1D.h */,
 				EFE094F4218A1AC000AF22E1 /* BSpline.h */,
 				EFE84DDA219D2A8900B88E6A /* DBSpline.h */,
-				EFE094F5218A1BA600AF22E1 /* FE1D.h */,
 			);
 			path = CE507_Coding2;
 			sourceTree = "<group>";
