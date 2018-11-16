@@ -20,6 +20,7 @@ int NELEM = 4;          // Number of elements
 // ----- Helper Function Declarations -----
 Eigen::Matrix3f C_P2(int e);
 Eigen::Matrix4f C_P3(int e);
+Eigen::MatrixXf C_P(int p, int e);
 
 // ----- Project Files -----
 #include "Verifications.h"
@@ -45,7 +46,9 @@ int main() {
     // Verification Testing ========================================================
     RunVerifications();
     
+    // ID, IEN, and LM Arrays ======================================================
     
+    // 
     
     return 0;
 }
@@ -119,4 +122,16 @@ Eigen::Matrix4f C_P3(int e) {
         C(3,0) = 0.0;     C(3,1) = 0.0;     C(3,2) = 0.0;     C(3,3) = 1.0/6.0;
     }
     return C;
+}
+
+/**
+ * @function C_P
+ * @brief Wrapper function for extraction matrices
+ * @param p : int : Order
+ * @param e : int : Element number
+ * @returns C : MatrixXf : Extraction matrix
+ */
+Eigen::MatrixXf C_P(int p, int e) {
+    if (p == 2) { return C_P2(e); }
+    else { return C_P3(e); }
 }

@@ -9,6 +9,28 @@
 
 #include <sstream>
 
+/**
+ * @class Domain1D
+ *
+ * @brief 1 Dimmensional Domain for use in Numerical Projects
+ * @discussion The Domain1D class contains information about a grid system for
+ * numerical computing. The main container is an array of type float that contains
+ * all of the points for the discrete domain. Various grid types including cell-edge,
+ * cell-centered, and ghost point grids are available.
+ *
+ * PUBLIC INTERFACE:
+ *
+ *  - <#data members#>
+ *
+ *  - <#methods#>
+ *
+ * PRIVATE INTERFACE:
+ *
+ *  - <#data members#>
+ *
+ *  - <#methods#>
+ *
+ */
 class Domain1D {
     
 public:
