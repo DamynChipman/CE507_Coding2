@@ -45,6 +45,7 @@ using namespace Eigen;
 int main() {
     
     int n = 0;
+    int p = 2;                                          // BSpline order
     
     // Verification Testing ========================================================
     bool verify = true;
@@ -61,11 +62,11 @@ int main() {
     ID[N[n]] = -1;
     
     // IEN array
-    int** IEN = new int*[2];
-    for (int i = 0; i < 2; i++) {
+    int** IEN = new int*[p+1];
+    for (int i = 0; i < p+1; i++) {
         IEN[i] = new int[N[n]];
     }
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < p+1; i++) {
         for (int j = 0; j < N[n]; j++) {
             if (i == 0) { IEN[i][j] = ID[j]; }
             else { IEN[i][j] = ID[j]+1; }
@@ -73,11 +74,11 @@ int main() {
     }
     
     // LM array
-    int** LM = new int*[2];
-    for (int i = 0; i < 2; i++) {
+    int** LM = new int*[p+1];
+    for (int i = 0; i < p+1; i++) {
         LM[i] = new int[N[n]];
     }
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < p+1; i++) {
         for (int j = 0; j < N[n]; j++) {
             LM[i][j] = ID[IEN[i][j]];
         }
@@ -94,7 +95,6 @@ int main() {
     w(0) = 5.0/9.0;                                     // Weight 1
     w(1) = 8.0/9.0;                                     // Weight 2
     w(2) = 5.0/9.0;                                     // Weight 3
-    int p = 2;                                          // BSpline order
     
     Eigen::VectorXf d = FE1D(LM, p, NE, NINT, w, del_e);
     
