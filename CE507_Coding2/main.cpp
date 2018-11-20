@@ -22,6 +22,9 @@ int N[4] = {10, 100, 1000, 10000};   // Number of elements array
 Eigen::Matrix3f C_P2(int e);
 Eigen::Matrix4f C_P3(int e);
 Eigen::MatrixXf C_P(int p, int e);
+float f_x(float x);
+//float k_update(int e, int i, int a, int b);
+//float f_update(int e, int i, int a);
 
 // ----- Project Files -----
 #include "Verifications.h"
@@ -86,17 +89,26 @@ int main() {
     
     // Run Assembly Algorithm FE1D ====================================================
     cout << "   calculating coefs..." << endl;
-    int NE = N[n];                                      // Number of elements
-    float leftBound = 0.0;                              // Left domain bound
-    float rightBound = 1.0;                             // Right domain bound
-    float del_e = (rightBound - leftBound)/(NE + 1.0);  // Element spacing
-    int NINT = 3;                                       // Number of integration points for quadrature
-    Eigen::VectorXf w(NINT);                            // Vector of weights for quadrature
-    w(0) = 5.0/9.0;                                     // Weight 1
-    w(1) = 8.0/9.0;                                     // Weight 2
-    w(2) = 5.0/9.0;                                     // Weight 3
+    int NE = N[n];                                        // Number of elements
+    float leftBound = 0.0;                                // Left domain bound
+    float rightBound = 1.0;                               // Right domain bound
+    float del_e = (rightBound - leftBound)/(NE + 1.0);    // Element spacing
+    int NINT = 3;                                         // Number of integration points for quadrature
+    Eigen::VectorXf w(NINT);                              // Vector of weights for quadrature
+    w(0) = 5.0/9.0;                                       // Weight 1
+    w(1) = 8.0/9.0;                                       // Weight 2
+    w(2) = 5.0/9.0;                                       // Weight 3
+    int NKNOTS = NE+NE+(NE);                              // Number of knots
+    Eigen::VectorXf knotVector(NKNOTS);                   // Knot vector
+    int NDEL_E = 1;                                       // Spacing iterator
+    for (int i = 0; i < NKNOTS; i++) {
+        if (i < NE) { knotVector(i) = leftBound; }
+        else if (i > NE+NE) {knotVector(i) = rightBound; }
+        else if (i >= NE) { knotVector(i) = NDEL_E*del_e; NDEL_E++; }
+    }
     
-    Eigen::VectorXf d = FE1D(LM, p, NE, NINT, w, del_e);
+    //Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, k_update, f_update, knotVector, w, del_e);
+    Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, knotVector, w, del_e); // Run FE1D
     
     // Generate solutions ===============================================================
     cout << "   generating solutions..." << endl;
@@ -186,3 +198,32 @@ Eigen::MatrixXf C_P(int p, int e) {
     if (p == 2) { return C_P2(e); }
     else { return C_P3(e); }
 }
+
+/**
+ * @function f_x
+ * @brief Forcing function
+ * @param x : float : Independent variable
+ * @returns x^2 : float
+ */
+float f_x(float x) { return x*x; }
+
+/**
+ * @function k_update
+ * @brief Update for k_e
+ * @param e : int : Element index
+ * @param i : int : Integration point index
+ * @param a : int : Shape function index
+ * @param b : int : Shape function index
+ * @returns res : float : Update to k_e matrix
+ */
+//float k_update(int e, int i, int a, int b);
+
+/**
+ * @function f_update
+ * @brief Update for f_e
+ * @param e : int : Element index
+ * @param i : int : Integration point index
+ * @param a : int : Shape function index
+ * @returns res : float : Update to f_e matrix
+ */
+//float f_update(int e, int i, int a);
