@@ -51,7 +51,7 @@ int main() {
     int p = 2;                                          // BSpline order
     
     // Verification Testing ========================================================
-    bool verify = true;
+    bool verify = false;
     if (verify) { cout << "   running verifications..." << endl; RunVerifications(); }
     
     // ID, IEN, and LM Arrays ======================================================
@@ -94,11 +94,15 @@ int main() {
     float rightBound = 1.0;                               // Right domain bound
     float del_e = (rightBound - leftBound)/(NE + 1.0);    // Element spacing
     int NINT = 3;                                         // Number of integration points for quadrature
+    Eigen::VectorXf intPoints(NINT);
+    intPoints(0) = -sqrt(3.0/5.0);
+    intPoints(1) = 0.0;
+    intPoints(2) = sqrt(3.0/5.0);
     Eigen::VectorXf w(NINT);                              // Vector of weights for quadrature
     w(0) = 5.0/9.0;                                       // Weight 1
     w(1) = 8.0/9.0;                                       // Weight 2
     w(2) = 5.0/9.0;                                       // Weight 3
-    int NKNOTS = NE+NE+(NE);                              // Number of knots
+    int NKNOTS = NE+NE+(NE);                            // Number of knots
     Eigen::VectorXf knotVector(NKNOTS);                   // Knot vector
     int NDEL_E = 1;                                       // Spacing iterator
     for (int i = 0; i < NKNOTS; i++) {
@@ -108,7 +112,10 @@ int main() {
     }
     
     //Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, k_update, f_update, knotVector, w, del_e);
-    Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, knotVector, w, del_e); // Run FE1D
+    Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, knotVector, NKNOTS, w, intPoints, del_e); // Run FE1D
+    
+    cout << "COEFS: " << endl;
+    cout << d << endl;
     
     // Generate solutions ===============================================================
     cout << "   generating solutions..." << endl;
