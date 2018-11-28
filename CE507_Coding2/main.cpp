@@ -5,8 +5,9 @@
 //   PROJECT:   CE507_Coding2
 
 // ----- GLOBAL VARIABLES -----
+bool VERBOSE = true;                 // Option for printing information
 int NNODES = 20;                     // Number of nodes per elements
-int NELEM = 4;                       // Number of elements
+int NELEM = 3;                       // Number of elements
 int N[4] = {10, 100, 1000, 10000};   // Number of elements array
 
 // ----- Necessary Files -----
@@ -89,27 +90,29 @@ int main() {
     
     // Run Assembly Algorithm FE1D ====================================================
     cout << "   calculating coefs..." << endl;
-    int NE = N[n];                                        // Number of elements
+    int NE = N[n];                                           // Number of elements
+    NELEM = NE;                                           // Global scope
     float leftBound = 0.0;                                // Left domain bound
     float rightBound = 1.0;                               // Right domain bound
     float del_e = (rightBound - leftBound)/(NE + 1.0);    // Element spacing
     int NINT = 3;                                         // Number of integration points for quadrature
-    Eigen::VectorXf intPoints(NINT);
-    intPoints(0) = -sqrt(3.0/5.0);
-    intPoints(1) = 0.0;
-    intPoints(2) = sqrt(3.0/5.0);
+    Eigen::VectorXf intPoints(NINT);                      // Vector of integration points
+    intPoints(0) = -sqrt(3.0/5.0);                        // Integration point 1
+    intPoints(1) = 0.0;                                   // Integration point 2
+    intPoints(2) = sqrt(3.0/5.0);                         // Integration point 3
     Eigen::VectorXf w(NINT);                              // Vector of weights for quadrature
     w(0) = 5.0/9.0;                                       // Weight 1
     w(1) = 8.0/9.0;                                       // Weight 2
     w(2) = 5.0/9.0;                                       // Weight 3
-    int NKNOTS = NE+NE+(NE);                            // Number of knots
+    int NKNOTS = (p+1)+(p+1)+(NE);                              // Number of knots
     Eigen::VectorXf knotVector(NKNOTS);                   // Knot vector
     int NDEL_E = 1;                                       // Spacing iterator
     for (int i = 0; i < NKNOTS; i++) {
-        if (i < NE) { knotVector(i) = leftBound; }
-        else if (i > NE+NE) {knotVector(i) = rightBound; }
-        else if (i >= NE) { knotVector(i) = NDEL_E*del_e; NDEL_E++; }
+        if (i < (p+1)) { knotVector(i) = leftBound; cout << "1: " << i << endl;}
+        if (i > ((p)+NE)) { knotVector(i) = rightBound; cout << "2: " << i << endl; }
+        if (i > p && i < (p+1+NE)) { knotVector(i) = NDEL_E*del_e; NDEL_E++; cout << "3: " << i << endl; }
     }
+    cout << "KNOT VECTOR: " << endl << knotVector << endl;
     
     //Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, k_update, f_update, knotVector, w, del_e);
     Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, knotVector, NKNOTS, w, intPoints, del_e); // Run FE1D
@@ -119,6 +122,14 @@ int main() {
     
     // Generate solutions ===============================================================
     cout << "   generating solutions..." << endl;
+    float u_app[NE];                  // Approximate solution
+    //float u_act[NE];                  // Actual solution
+    for (int i = 0; i < NE; i++) {
+        u_app[i] = 0.0;
+        for (int j = 0; j < NE; j++) {
+            
+        }
+    }
     
     return 0;
 }
@@ -139,7 +150,7 @@ Eigen::Matrix3f C_P2(int e) {
         C(1,0) = 0.0;   C(1,1) = 1.0;   C(1,2) = 0.5;
         C(2,0) = 0.0;   C(2,1) = 0.0;   C(2,2) = 0.5;
     }
-    else if (e == 4) {
+    else if (e == NELEM) {
         C(0,0) = 0.5;   C(0,1) = 0.0;   C(0,2) = 0.0;
         C(1,0) = 0.5;   C(1,1) = 1.0;   C(1,2) = 0.0;
         C(2,0) = 0.0;   C(2,1) = 0.0;   C(2,2) = 1.0;
