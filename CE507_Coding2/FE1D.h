@@ -28,7 +28,7 @@ Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, float (*f)(float), Eigen
 
     // Initialize matrices
     std::vector<triplet> coefs;
-    Eigen::VectorXf F(NE);
+    Eigen::VectorXf F(NE+1);
     for (int i = 0; i < NE; i++) {
         F(i) = 0;
     }
@@ -40,6 +40,10 @@ Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, float (*f)(float), Eigen
     // ----- Begin Assembly Algorithm -----
     if (VERBOSE) { cout << "---------- BEGINNING ASSEMBLY ALGORITHM ----------" << endl; }
     for (int e = 0; e < NE; e++) {
+        
+        k_ab = Eigen::MatrixXf::Zero(p+1,p+1);
+        f_a = Eigen::VectorXf::Zero(p+1);
+        
         if (VERBOSE) { cout << "  Element: " << e << endl << endl; }
         
         for (int i = 0; i < NINT; i++) {
@@ -65,10 +69,10 @@ Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, float (*f)(float), Eigen
                 // Calc x_A
                 float x_A = 0.0;
                 for (int j = A+1; j < A + p + 1; j++) {
-                    cout << "S(i) @ " << j << ": " << knotVector(j+e) << endl;
+                    //cout << "S(i) @ " << j << ": " << knotVector(j+e) << endl;
                     x_A = x_A + (1.0/p)*knotVector(j+e);
                 }
-                cout << "x_A: " << x_A << endl;
+                //cout << "x_A: " << x_A << endl;
                 
                 // Calc x
                 x_xi = x_xi + x_A*Np_vec(A);
@@ -125,7 +129,7 @@ Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, float (*f)(float), Eigen
     if (VERBOSE) { cout << "---------- END OF ASSEMBLY ALGORITHM ----------" << endl; }
     
     
-    SpMat K(NE,NE);
+    SpMat K(NE+1,NE+1);
     K.setFromTriplets(coefs.begin(), coefs.end());
     Eigen::SimplicialCholesky<SpMat> chol(K);
     Eigen::VectorXf d = chol.solve(F);
