@@ -64,13 +64,16 @@ Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, float (*f)(float), Eigen
                 
                 // Calc x_A
                 float x_A = 0.0;
-                for (int i = 0; i < A + p; i++) {
-                    x_A = x_A + (1.0/p)*knotVector(A+i);
+                for (int j = A+1; j < A + p + 1; j++) {
+                    cout << "S(i) @ " << j << ": " << knotVector(j+e) << endl;
+                    x_A = x_A + (1.0/p)*knotVector(j+e);
                 }
+                cout << "x_A: " << x_A << endl;
                 
                 // Calc x
                 x_xi = x_xi + x_A*Np_vec(A);
             }
+            
             
             // Compute f_i = f(x(xi_i))
             float f_i = f(x_xi);
@@ -82,25 +85,25 @@ Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, float (*f)(float), Eigen
                     //k_ab(a,b) = k_ab(a,b) + k_update(e,i,a,b);
                 }
                 // Compute and update f_e_a
-                f_a(a) = f_a(a) + Np_vec(a)*f_i*(del_e/2)*w(i);
+                f_a(a) = f_a(a) + Np_vec(a)*f_i*(del_e/2.0)*w(i);
                 //f_a(a) = f_a(a) + f_update(e,i,a);
             }
             
             if (VERBOSE) { // Print out
-                cout << "      B_array: [";
+                cout << "      B_array:  [";
                 for(int n = 0; n < NINT; n++) { cout << Bpi_vec(n) << " ";}
                 cout << "]" << endl;
                 cout << "      dB_array: [";
                 for(int n = 0; n < NINT; n++) { cout << DBpi_vec(n) << " ";}
                 cout << "]" << endl;
-                cout << "      N_array: [";
+                cout << "      N_array:  [";
                 for(int n = 0; n < NINT; n++) { cout << Np_vec(n) << " ";}
                 cout << "]" << endl;
                 cout << "      dN_array: [";
                 for(int n = 0; n < NINT; n++) { cout << DNp_vec(n) << " ";}
                 cout << "]" << endl;
-                cout << "      x: " << x_xi << endl;
-                cout << "      f(x): " << f_i << endl;
+                cout << "      x:         " << x_xi << endl;
+                cout << "      f(x):      " << f_i << endl;
                 cout << "      f_a: " << endl << f_a << endl << endl;
                 cout << "      k_ab: " << endl << k_ab << endl << endl;
             }
@@ -121,10 +124,18 @@ Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, float (*f)(float), Eigen
     // ----- End Assembly Algorithm -----
     if (VERBOSE) { cout << "---------- END OF ASSEMBLY ALGORITHM ----------" << endl; }
     
+    
     SpMat K(NE,NE);
     K.setFromTriplets(coefs.begin(), coefs.end());
     Eigen::SimplicialCholesky<SpMat> chol(K);
     Eigen::VectorXf d = chol.solve(F);
+    
+    if (VERBOSE) {
+        cout << endl << "K: " << endl << K << endl;
+        cout << endl << "F: " << endl << F << endl;
+        cout << endl << "d: " << endl << d << endl;
+    }
+    
     return d;
 }
 

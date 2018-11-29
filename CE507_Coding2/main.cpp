@@ -7,8 +7,8 @@
 // ----- GLOBAL VARIABLES -----
 bool VERBOSE = true;                 // Option for printing information
 int NNODES = 20;                     // Number of nodes per elements
-int NELEM = 3;                       // Number of elements
-int N[4] = {10, 100, 1000, 10000};   // Number of elements array
+int NELEM;                       // Number of elements
+int N[4] = {3, 100, 1000, 10000};   // Number of elements array
 
 // ----- Necessary Files -----
 #include <iostream>
@@ -90,11 +90,11 @@ int main() {
     
     // Run Assembly Algorithm FE1D ====================================================
     cout << "   calculating coefs..." << endl;
-    int NE = N[n];                                           // Number of elements
+    int NE = N[n];                                        // Number of elements
     NELEM = NE;                                           // Global scope
     float leftBound = 0.0;                                // Left domain bound
     float rightBound = 1.0;                               // Right domain bound
-    float del_e = (rightBound - leftBound)/(NE + 1.0);    // Element spacing
+    float del_e = (rightBound - leftBound)/(NE);          // Element spacing
     int NINT = 3;                                         // Number of integration points for quadrature
     Eigen::VectorXf intPoints(NINT);                      // Vector of integration points
     intPoints(0) = -sqrt(3.0/5.0);                        // Integration point 1
@@ -104,21 +104,17 @@ int main() {
     w(0) = 5.0/9.0;                                       // Weight 1
     w(1) = 8.0/9.0;                                       // Weight 2
     w(2) = 5.0/9.0;                                       // Weight 3
-    int NKNOTS = (p+1)+(p+1)+(NE);                              // Number of knots
+    int NKNOTS = (p+1)+(p+1)+(NE)-1;                      // Number of knots
     Eigen::VectorXf knotVector(NKNOTS);                   // Knot vector
     int NDEL_E = 1;                                       // Spacing iterator
     for (int i = 0; i < NKNOTS; i++) {
-        if (i < (p+1)) { knotVector(i) = leftBound; cout << "1: " << i << endl;}
-        if (i > ((p)+NE)) { knotVector(i) = rightBound; cout << "2: " << i << endl; }
-        if (i > p && i < (p+1+NE)) { knotVector(i) = NDEL_E*del_e; NDEL_E++; cout << "3: " << i << endl; }
+        if (i < (p+1)) { knotVector(i) = leftBound; }
+        if (i > ((p)+NE)) { knotVector(i) = rightBound; }
+        if (i > p && i < (p+1+NE)) { knotVector(i) = NDEL_E*del_e; NDEL_E++; }
     }
-    cout << "KNOT VECTOR: " << endl << knotVector << endl;
     
     //Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, k_update, f_update, knotVector, w, del_e);
     Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, knotVector, NKNOTS, w, intPoints, del_e); // Run FE1D
-    
-    cout << "COEFS: " << endl;
-    cout << d << endl;
     
     // Generate solutions ===============================================================
     cout << "   generating solutions..." << endl;
@@ -145,12 +141,12 @@ int main() {
 Eigen::Matrix3f C_P2(int e) {
     Eigen::Matrix3f C;
     
-    if (e == 1) {
+    if (e == 0) {
         C(0,0) = 1.0;   C(0,1) = 0.0;   C(0,2) = 0.0;
         C(1,0) = 0.0;   C(1,1) = 1.0;   C(1,2) = 0.5;
         C(2,0) = 0.0;   C(2,1) = 0.0;   C(2,2) = 0.5;
     }
-    else if (e == NELEM) {
+    else if (e == NELEM-1) {
         C(0,0) = 0.5;   C(0,1) = 0.0;   C(0,2) = 0.0;
         C(1,0) = 0.5;   C(1,1) = 1.0;   C(1,2) = 0.0;
         C(2,0) = 0.0;   C(2,1) = 0.0;   C(2,2) = 1.0;
@@ -172,25 +168,25 @@ Eigen::Matrix3f C_P2(int e) {
 Eigen::Matrix4f C_P3(int e) {
     Eigen::Matrix4f C;
     
-    if (e == 1) {
+    if (e == 0) {
         C(0,0) = 1.0;   C(0,1) = 0.0;   C(0,2) = 0.0;   C(0,3) = 0.0;
         C(1,0) = 0.0;   C(1,1) = 1.0;   C(1,2) = 0.5;   C(1,3) = 0.25;
         C(2,0) = 0.0;   C(2,1) = 0.0;   C(2,2) = 0.5;   C(2,3) = 7.0/12.0;
         C(3,0) = 0.0;   C(3,1) = 0.0;   C(3,2) = 0.0;   C(3,3) = 1.0/6.0;
     }
-    else if (e == 2) {
+    else if (e == 1) {
         C(0,0) = 0.25;     C(0,1) = 0.0;     C(0,2) = 0.0;     C(0,3) = 0.0;
         C(1,0) = 7.0/12.0; C(1,1) = 2.0/3.0; C(1,2) = 1.0/3.0; C(1,3) = 1.0/6.0;
         C(2,0) = 1.0/6.0;  C(2,1) = 1.0/3.0; C(2,2) = 2.0/3.0; C(2,3) = 2.0/3.0;
         C(3,0) = 0.0;      C(3,1) = 0.0;     C(3,2) = 0.0;     C(3,3) = 1.0/6.0;
     }
-    else if (e == NELEM-1) {
+    else if (e == NELEM-2) {
         C(0,0) = 1.0/6.0; C(0,1) = 0.0;     C(0,2) = 0.0;     C(0,3) = 0.0;
         C(1,0) = 2.0/3.0; C(1,1) = 2.0/3.0; C(1,2) = 1.0/3.0; C(1,3) = 1.0/6.0;
         C(2,0) = 1.0/6.0; C(2,1) = 1.0/3.0; C(2,2) = 2.0/3.0; C(2,3) = 7.0/12.0;
         C(3,0) = 0.0;     C(3,1) = 0.0;     C(3,2) = 0.0;     C(3,3) = 1.0/4.0;
     }
-    else if (e == NELEM) {
+    else if (e == NELEM-1) {
         C(0,0) = 1.0/6.0;  C(0,1) = 0.0;   C(0,2) = 0.0;   C(0,3) = 0.0;
         C(1,0) = 7.0/12.0; C(1,1) = 0.5;   C(1,2) = 0.0;   C(1,3) = 0.0;
         C(2,0) = 1.0/4.0;  C(2,1) = 0.5;   C(2,2) = 1.0;   C(2,3) = 0.0;
