@@ -5,7 +5,7 @@
 //   PROJECT:   CE507_Coding2
 
 // ----- GLOBAL VARIABLES -----
-bool VERBOSE = true;                 // Option for printing information
+bool VERBOSE = false;                 // Option for printing information
 bool VERIFY = false;                 // Option for verifying cases
 int NNODES = 20;                     // Number of nodes per elements
 int NELEM;                           // Number of elements
@@ -28,6 +28,7 @@ float f_x(float x);
 float u_actual(float x);
 
 // ----- Project Files -----
+#include "RunCase.h"
 #include "Verifications.h"
 #include "Domain1D.h"
 #include "BSpline.h"
@@ -48,115 +49,13 @@ using namespace Eigen;
  */
 int main() {
     
-    int n = 0;             // Number of elements index
-    int p = 2;             // BSpline order
-    
     // Verification Testing ========================================================
-    
     if (VERIFY) { cout << "   running verifications..." << endl; RunVerifications(); }
     
-    // ID, IEN, and LM Arrays ======================================================
-    cout << "   generating array mappings..." << endl;
-    
-    // ID array
-    int* ID = new int[N[n]];
-    for (int i = 0; i < N[n]+1; i++) {
-        ID[i] = i;
-    }
-    ID[N[n]] = -1;
-    
-    // IEN array
-    int** IEN = new int*[p+1];
-    for (int i = 0; i < p+1; i++) {
-        IEN[i] = new int[N[n]];
-    }
-    for (int i = 0; i < p+1; i++) {
-        for (int j = 0; j < N[n]; j++) {
-            if (i == 0) { IEN[i][j] = ID[j]; }
-            else { IEN[i][j] = ID[j]+1; }
-        }
-    }
-    
-    // LM array
-    int** LM = new int*[p+1];
-    for (int i = 0; i < p+1; i++) {
-        LM[i] = new int[N[n]];
-    }
-    for (int i = 0; i < p+1; i++) {
-        for (int j = 0; j < N[n]; j++) {
-            LM[i][j] = ID[IEN[i][j]];
-            //cout << LM[i][j] << " ";
-        }
-        //cout << endl;
-    }
-    if (VERBOSE) {
-        cout << "LM array: " << endl;
-        for (int i = 0; i < p+1; i++) {
-            for (int j = 0; j < 5; j++) {
-                cout << LM[i][j] << " ";
-            }
-            cout << "... ";
-            for (int j = N[n]-5; j < N[n]; j++) {
-                cout << LM[i][j] << " ";
-            }
-            cout << endl;
-        }
-        cout << endl;
-    }
-    
-    // Run Assembly Algorithm FE1D ====================================================
-    cout << "   calculating coefs..." << endl;
-    int NE = N[n];                                        // Number of elements
-    NELEM = NE;                                           // Global scope
-    float leftBound = 0.0;                                // Left domain bound
-    float rightBound = 1.0;                               // Right domain bound
-    float del_e = (rightBound - leftBound)/(NE);          // Element spacing
-    int NINT = 3;                                         // Number of integration points for quadrature
-    Eigen::VectorXf intPoints(NINT);                      // Vector of integration points
-    intPoints(0) = -sqrt(3.0/5.0);                        // Integration point 1
-    intPoints(1) = 0.0;                                   // Integration point 2
-    intPoints(2) = sqrt(3.0/5.0);                         // Integration point 3
-    Eigen::VectorXf w(NINT);                              // Vector of weights for quadrature
-    w(0) = 5.0/9.0;                                       // Weight 1
-    w(1) = 8.0/9.0;                                       // Weight 2
-    w(2) = 5.0/9.0;                                       // Weight 3
-    int NKNOTS = (p+1)+(p+1)+(NE)-1;                      // Number of knots
-    Eigen::VectorXf knotVector(NKNOTS);                   // Knot vector
-    int NDEL_E = 1;                                       // Spacing iterator
-    for (int i = 0; i < NKNOTS; i++) {
-        if (i < (p+1)) { knotVector(i) = leftBound; }
-        if (i > ((p)+NE)) { knotVector(i) = rightBound; }
-        if (i > p && i < (p+1+NE)) { knotVector(i) = NDEL_E*del_e; NDEL_E++; }
-    }
-    if (VERBOSE) {
-        cout << "Knot Vector: ";
-        for (int i = 0; i < knotVector.size(); i++) {
-            cout << knotVector(i) << " ";
-        }
-        cout << endl;
-    }
-    
-    //Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, k_update, f_update, knotVector, w, del_e);
-    Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, knotVector, NKNOTS, w, intPoints, del_e); // Run FE1D
-    
-    // Generate solutions ===============================================================
-    cout << "   generating solutions..." << endl;
-    
-    
-    
-    // Calculate error ==================================================================
-    cout << "   calculating error..." << endl;
-    for (int e = 0; e < NE; e++) {
-        
-    }
-//    float u_FE[NE];
-//    for (int i = 0; i < NE; i++) {
-//        u_FE[i] = 0.0;
-//        for (int a = 0; a < p+1; a++) {
-//            u_FE[i] += d(i+a);
-//        }
-//    }
-    
+    // Run case
+    int n = 3;             // Number of elements index
+    int p = 3;             // BSpline order
+    float error = RunCase(n,p);
     
     return 0;
 }
@@ -261,3 +160,7 @@ Eigen::MatrixXf C_P(int p, int e) {
  * @returns x^2 : float
  */
 float f_x(float x) { return x*x; }
+
+float u_actual(float x) {
+    return (pow(x,2)/2)*(1 - pow(x,2));
+}

@@ -23,6 +23,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		EF40E7E121C30EF20087590D /* RunCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RunCase.h; sourceTree = "<group>"; };
 		EF54A0F1218388E900772089 /* CE507_Coding2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CE507_Coding2; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF54A0F4218388E900772089 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		EF54A0FB2183890800772089 /* Domain1D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Domain1D.h; sourceTree = "<group>"; };
@@ -63,6 +64,7 @@
 			isa = PBXGroup;
 			children = (
 				EF54A0F4218388E900772089 /* main.cpp */,
+				EF40E7E121C30EF20087590D /* RunCase.h */,
 				EFE094F5218A1BA600AF22E1 /* FE1D.h */,
 				EFE84DDB219D550A00B88E6A /* Verifications.h */,
 				EF54A0FB2183890800772089 /* Domain1D.h */,
