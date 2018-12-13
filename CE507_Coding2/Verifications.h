@@ -14,12 +14,24 @@
 
 using namespace std;
 
+vector<float> controlPoints(int n, float delX) {
+    vector<float> CP(3);
+    CP[0] = (n - 1)*delX;
+    CP[1] = (delX/2.0)*(2*n + 1);
+    CP[2] = n*delX;
+    return CP;
+}
+
 void RunVerifications() {
     
     // BSpline Verification ===========================================================
     //   The vectors of BSpline objects contain 3 and 4 instances of the BSpline basis
     //   functions, each with a different order. Their values are output into CSV files
     //   and verified before moving on.
+    vector<BSpline> B_P1;
+    B_P1.push_back(BSpline(1,1,NNODES));
+    B_P1.push_back(BSpline(1,2,NNODES));
+    
     vector<BSpline> B_P2;
     B_P2.push_back(BSpline(2,1,NNODES));
     B_P2.push_back(BSpline(2,2,NNODES));
@@ -32,6 +44,8 @@ void RunVerifications() {
     B_P3.push_back(BSpline(3,4,NNODES));
     
     ofstream domainOutput("domain.csv");
+    ofstream B_P1Output1("B_P1_a1.csv");
+    ofstream B_P1Output2("B_P1_a2.csv");
     ofstream B_P2Output1("B_P2_a1.csv");
     ofstream B_P2Output2("B_P2_a2.csv");
     ofstream B_P2Output3("B_P2_a3.csv");
@@ -41,6 +55,8 @@ void RunVerifications() {
     ofstream B_P3Output4("B_P3_a4.csv");
     for (int i = 0; i < NNODES; i++) {
         domainOutput << B_P2[0].getDomain().getNodes()[i] << ',';
+        B_P1Output1 << B_P1[0].getPoints()[i] << ',';
+        B_P1Output2 << B_P1[1].getPoints()[i] << ',';
         B_P2Output1 << B_P2[0].getPoints()[i] << ',';
         B_P2Output2 << B_P2[1].getPoints()[i] << ',';
         B_P2Output3 << B_P2[2].getPoints()[i] << ',';
@@ -49,6 +65,13 @@ void RunVerifications() {
         B_P3Output3 << B_P3[2].getPoints()[i] << ',';
         B_P3Output4 << B_P3[3].getPoints()[i] << ',';
     }
+    
+    // Local to Global Verification ===========================================================
+    //    Create a mapping from the local domain in xi to the global domain in x.
+    
+    
+    
+    
     
     // Integration Points Verification ========================================================
     //    Compare values of BSpline vector to given values from Dr. Borden's calculations.

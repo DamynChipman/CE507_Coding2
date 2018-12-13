@@ -28,7 +28,7 @@ Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, float (*f)(float), Eigen
 
     // Initialize matrices
     std::vector<triplet> coefs;
-    Eigen::VectorXf F(NE+1);
+    Eigen::VectorXf F(NE);
     for (int i = 0; i < NE; i++) {
         F(i) = 0;
     }
@@ -95,16 +95,16 @@ Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, float (*f)(float), Eigen
             
             if (VERBOSE) { // Print out
                 cout << "      B_array:  [";
-                for(int n = 0; n < NINT; n++) { cout << Bpi_vec(n) << " ";}
+                for(int n = 0; n < NINT; n++) { cout << Bpi_vec(n) << " "; }
                 cout << "]" << endl;
                 cout << "      dB_array: [";
-                for(int n = 0; n < NINT; n++) { cout << DBpi_vec(n) << " ";}
+                for(int n = 0; n < NINT; n++) { cout << DBpi_vec(n) << " "; }
                 cout << "]" << endl;
                 cout << "      N_array:  [";
-                for(int n = 0; n < NINT; n++) { cout << Np_vec(n) << " ";}
+                for(int n = 0; n < NINT; n++) { cout << Np_vec(n) << " "; }
                 cout << "]" << endl;
                 cout << "      dN_array: [";
-                for(int n = 0; n < NINT; n++) { cout << DNp_vec(n) << " ";}
+                for(int n = 0; n < NINT; n++) { cout << DNp_vec(n) << " "; }
                 cout << "]" << endl;
                 cout << "      x:         " << x_xi << endl;
                 cout << "      f(x):      " << f_i << endl;
@@ -113,23 +113,27 @@ Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, float (*f)(float), Eigen
             }
         }
         for (int a = 0; a < p+1; a++) {
+            int P = LM[a][e];
             for (int b = 0; b < p+1; b++) {
-                if (LM[a][e] > -1) {
+                //cout << "a = " << a << "  b = " << b << endl;
+                int Q = LM[b][e];
+                //cout << "  P = " << P << "  Q = " << Q << endl;
+                if (P != -1 && Q != -1) {
                     // Compute and update K_LM[a][e]_LM[a][e]
-                    coefs.push_back(triplet(LM[a][e],LM[a][e],k_ab(a,b)));
+                    //cout << "updating global K @ [" << P << ", " << Q << "] with local k_e[" << a << ", " << b << "] = " << k_ab(a,b) << endl;
+                    coefs.push_back(triplet(P,Q,k_ab(a,b)));
                 }
             }
-            if (LM[a][e] > -1) {
+            if (P != -1) {
                 // Compute and update F_LM[a][e]
-                F(LM[a][e]) = F(LM[a][e]) + f_a(a);
+                F(P) = F(P) + f_a(a);
             }
         }
     }
     // ----- End Assembly Algorithm -----
     if (VERBOSE) { cout << "---------- END OF ASSEMBLY ALGORITHM ----------" << endl; }
     
-    
-    SpMat K(NE+1,NE+1);
+    SpMat K(NE,NE);
     K.setFromTriplets(coefs.begin(), coefs.end());
     Eigen::SimplicialCholesky<SpMat> chol(K);
     Eigen::VectorXf d = chol.solve(F);

@@ -6,9 +6,10 @@
 
 // ----- GLOBAL VARIABLES -----
 bool VERBOSE = true;                 // Option for printing information
+bool VERIFY = false;                 // Option for verifying cases
 int NNODES = 20;                     // Number of nodes per elements
-int NELEM;                       // Number of elements
-int N[4] = {3, 100, 1000, 10000};   // Number of elements array
+int NELEM;                           // Number of elements
+int N[4] = {10, 100, 1000, 10000};   // Number of elements array
 
 // ----- Necessary Files -----
 #include <iostream>
@@ -24,8 +25,7 @@ Eigen::Matrix3f C_P2(int e);
 Eigen::Matrix4f C_P3(int e);
 Eigen::MatrixXf C_P(int p, int e);
 float f_x(float x);
-//float k_update(int e, int i, int a, int b);
-//float f_update(int e, int i, int a);
+float u_actual(float x);
 
 // ----- Project Files -----
 #include "Verifications.h"
@@ -48,12 +48,12 @@ using namespace Eigen;
  */
 int main() {
     
-    int n = 0;
-    int p = 2;                                          // BSpline order
+    int n = 0;             // Number of elements index
+    int p = 2;             // BSpline order
     
     // Verification Testing ========================================================
-    bool verify = false;
-    if (verify) { cout << "   running verifications..." << endl; RunVerifications(); }
+    
+    if (VERIFY) { cout << "   running verifications..." << endl; RunVerifications(); }
     
     // ID, IEN, and LM Arrays ======================================================
     cout << "   generating array mappings..." << endl;
@@ -85,7 +85,23 @@ int main() {
     for (int i = 0; i < p+1; i++) {
         for (int j = 0; j < N[n]; j++) {
             LM[i][j] = ID[IEN[i][j]];
+            //cout << LM[i][j] << " ";
         }
+        //cout << endl;
+    }
+    if (VERBOSE) {
+        cout << "LM array: " << endl;
+        for (int i = 0; i < p+1; i++) {
+            for (int j = 0; j < 5; j++) {
+                cout << LM[i][j] << " ";
+            }
+            cout << "... ";
+            for (int j = N[n]-5; j < N[n]; j++) {
+                cout << LM[i][j] << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
     }
     
     // Run Assembly Algorithm FE1D ====================================================
@@ -112,25 +128,49 @@ int main() {
         if (i > ((p)+NE)) { knotVector(i) = rightBound; }
         if (i > p && i < (p+1+NE)) { knotVector(i) = NDEL_E*del_e; NDEL_E++; }
     }
+    if (VERBOSE) {
+        cout << "Knot Vector: ";
+        for (int i = 0; i < knotVector.size(); i++) {
+            cout << knotVector(i) << " ";
+        }
+        cout << endl;
+    }
     
     //Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, k_update, f_update, knotVector, w, del_e);
     Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, knotVector, NKNOTS, w, intPoints, del_e); // Run FE1D
     
     // Generate solutions ===============================================================
     cout << "   generating solutions..." << endl;
-    float u_app[NE];                  // Approximate solution
-    //float u_act[NE];                  // Actual solution
-    for (int i = 0; i < NE; i++) {
-        u_app[i] = 0.0;
-        for (int j = 0; j < NE; j++) {
-            
-        }
+    
+    
+    
+    // Calculate error ==================================================================
+    cout << "   calculating error..." << endl;
+    for (int e = 0; e < NE; e++) {
+        
     }
+//    float u_FE[NE];
+//    for (int i = 0; i < NE; i++) {
+//        u_FE[i] = 0.0;
+//        for (int a = 0; a < p+1; a++) {
+//            u_FE[i] += d(i+a);
+//        }
+//    }
+    
     
     return 0;
 }
 
 // ----- Helper Function Definitions -----
+
+Eigen::Matrix2f C_P1(int e) {
+    Eigen::Matrix2f C;
+    
+    C(0,0) = 1.0; C(0,1) = 1.0;
+    C(1,0) = 1.0; C(1,1) = 1.0;
+    
+    return C;
+}
 
 /**
  * @function C_P2
@@ -210,6 +250,7 @@ Eigen::Matrix4f C_P3(int e) {
  */
 Eigen::MatrixXf C_P(int p, int e) {
     if (p == 2) { return C_P2(e); }
+    else if (p == 1) { return C_P1(e); }
     else { return C_P3(e); }
 }
 
@@ -220,24 +261,3 @@ Eigen::MatrixXf C_P(int p, int e) {
  * @returns x^2 : float
  */
 float f_x(float x) { return x*x; }
-
-/**
- * @function k_update
- * @brief Update for k_e
- * @param e : int : Element index
- * @param i : int : Integration point index
- * @param a : int : Shape function index
- * @param b : int : Shape function index
- * @returns res : float : Update to k_e matrix
- */
-//float k_update(int e, int i, int a, int b);
-
-/**
- * @function f_update
- * @brief Update for f_e
- * @param e : int : Element index
- * @param i : int : Integration point index
- * @param a : int : Shape function index
- * @returns res : float : Update to f_e matrix
- */
-//float f_update(int e, int i, int a);
