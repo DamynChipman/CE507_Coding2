@@ -14,13 +14,13 @@
 
 using namespace std;
 
-vector<float> controlPoints(int n, float delX) {
-    vector<float> CP(3);
-    CP[0] = (n - 1)*delX;
-    CP[1] = (delX/2.0)*(2*n + 1);
-    CP[2] = n*delX;
-    return CP;
-}
+//vector<float> controlPoints(int n, float delX) {
+//    vector<float> CP(3);
+//    CP[0] = (n - 1)*delX;
+//    CP[1] = (delX/2.0)*(2*n + 1);
+//    CP[2] = n*delX;
+//    return CP;
+//}
 
 void RunVerifications() {
     
@@ -260,25 +260,6 @@ void RunVerifications() {
     IP_P3Out << B_P3_int3.getPoints()[1] << ",";
     IP_P3Out << B_P3_int3.getPoints()[2] << ",";
     IP_P3Out << B_P3_int3.getPoints()[3] << ",";
-    
-    
-    // Extraction Operator Verification ========================================================
-    //    Multiplying the BSpline vectors by the extraction operator matrix
-    //    to obtain shape functions N. It's necessary to use Eigen's vector functionality
-    //    in order to perform the multiplications. Checking with Dr. Borden's calculations.
-//    Eigen::VectorXf B_P2_vec = B_P2_int.getVector();
-//    Eigen::VectorXf N_P2_vec = C_P2(1)*B_P2_vec;
-//    cout << "Integration Points Verification - N_P2:" << endl;
-//    cout << N_P2_vec[0] << " ";
-//    cout << N_P2_vec[1] << " ";
-//    cout << N_P2_vec[2] << " " << endl << endl;
-//
-//    Eigen::VectorXf DB_P2_vec = DB_P2_int.getVector();
-//    Eigen::VectorXf DN_P2_vec = C_P2(1)*DB_P2_vec;
-//    cout << "Integration Points Verification - DN_P2:" << endl;
-//    cout << DN_P2_vec[0] << " ";
-//    cout << DN_P2_vec[1] << " ";
-//    cout << DN_P2_vec[2] << " " << endl << endl;
 }
 
 

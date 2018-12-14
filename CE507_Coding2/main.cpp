@@ -5,12 +5,12 @@
 //   PROJECT:   CE507_Coding2
 
 // ----- GLOBAL VARIABLES -----
-bool VERBOSE = true;                 // Option for printing information
-bool VERIFY = true;                  // Option for verifying cases
-bool OUTPUT = true;                  // Option for outputing results to CSV
-int NNODES = 20;                     // Number of nodes per elements
-int NELEM;                           // Number of elements
-int N[4] = {10, 100, 1000, 10000};   // Number of elements array
+bool VERBOSE = true;                  // Option for printing information
+bool VERIFY = true;                   // Option for verifying cases
+bool OUTPUT = true;                   // Option for outputing results to CSV
+int NNODES = 20;                      // Number of nodes per elements
+int NELEM;                            // Number of elements
+int N[4] = {10, 100, 1000, 10000};    // Number of elements array
 
 // ----- Necessary Files -----
 #include <iostream>
@@ -55,7 +55,8 @@ int main() {
     
     // Run case
     int n = 0;             // Number of elements index
-    int p = 2;             // BSpline order
+    int p = 3;             // BSpline order
+    cout << " ===== RUNNING CASE FOR n = " << n << " p = " << p << " ===== " << endl;
     float error = RunCase(n,p);
     cout << "Error = " << error << endl;
     
@@ -163,6 +164,12 @@ Eigen::MatrixXf C_P(int p, int e) {
  */
 float f_x(float x) { return x*x; }
 
+/**
+ * @function u_actual
+ * @brief Calculates actual u from analytical solution
+ * @param X : float : Input variable
+ * @returns res : float : Result based on equation
+ */
 float u_actual(float x) {
     return (pow(x,2)/2)*(1 - pow(x,2));
 }

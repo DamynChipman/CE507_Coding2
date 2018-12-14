@@ -43,8 +43,25 @@ public:
     }
     
     float eval(float X) {
-        float res = (1.0/(2.0*order_))*(factorial(order_)/(factorial(basisID_ - 1.0) * factorial(order_ + 1.0 - basisID_)));
-        res = res * pow(1 - X, order_ - (basisID_ - 1)) * pow(1 + X, basisID_ - 1);
+        float res = (1.0/(2.0*order_))*(factorial(order_)/(factorial(basisID_ - 1.0) * factorial(order_ + 1.0 - basisID_))) * pow(1 - X, order_ - (basisID_ - 1)) * pow(1 + X, basisID_ - 1);
+        
+        if (order_ == 3) {
+            if (basisID_ == 1) {
+                res = (3.0/4.0)*(1.0/6.0)*pow(1 - X,3);
+            }
+            else if (basisID_ == 2) {
+                res = (3.0/4.0)*(1.0/2.0)*(1 + X)*pow(1 - X,2);
+            }
+            else if (basisID_ == 3) {
+                res = (3.0/4.0)*(1.0/2.0)*(1 - X)*pow(1 + X,2);
+            }
+            else if (basisID_ == 4) {
+                res = (3.0/4.0)*(1.0/6.0)*pow(1 + X,3);
+            }
+            else {
+                
+            }
+        }
         return res;
     }
     

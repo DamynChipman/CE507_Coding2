@@ -116,7 +116,9 @@ float RunCase(int n, int p) {
             // Calculate FE solution in element
             u_FE[i] = 0.0;
             for (int a = 0; a < p+1; a++) {
-                u_FE[i] += d(i+a)*Np_vec(a);
+                if (e+a < NE) {
+                    u_FE[i] += d(e+a)*Np_vec(a);
+                }
             }
             
             // Calculate actual solution in element
@@ -127,30 +129,24 @@ float RunCase(int n, int p) {
                 // Calc x_A
                 float x_A = 0.0;
                 for (int j = A+1; j < A + p + 1; j++) {
-                    //cout << "S(i) @ " << j << ": " << knotVector(j+e) << endl;
-                    x_A = x_A + (1.0/p)*knotVector(j+e);
+                    x_A = x_A + knotVector(j+e);
                 }
-                //cout << "x_A: " << x_A << endl;
                 
                 // Calc x
-                x_xi = x_xi + x_A*Np_vec(A);
+                if (p != 1) {
+                    x_xi = x_xi + (1.0/p)*x_A*Np_vec(A);
+                }
+                else {
+                    x_xi = x_xi + (1.0/p)*x_A*Bpi_vec(A);
+                }
             }
             u_ACT = u_actual(x_xi);
-
-            if (OUTPUT) {
-                globalDomainOut << x_xi << ",";
-                N_P2_a1Out << Np_vec(0) << ",";
-                N_P2_a2Out << Np_vec(1) << ",";
-                N_P2_a3Out << Np_vec(2) << ",";
-                u_FEOut << u_FE[i] << ",";
-            }
-            //cout << "a = 1: " << Np_vec(0) << "  a = 2: " << Np_vec(1) << "  a = 3: " << Np_vec(2) << endl;
-            cout << "x_xi = " << x_xi << "   u_FE[" << i << "] = " << u_FE[i] << "   u_ACT = " << u_ACT << endl;
             
             // Sum the error
-            error += pow(abs(u_ACT - u_FE[i]),2) * (del_e/2) * w(i);
+            error += pow(abs(u_ACT - u_FE[i]),2) * (del_e/2.0) * w(i);
         }
     }
+    error = pow(error,0.5); // sqrt of error
     if (VERBOSE) { cout << "Calculated Error for n = " << n << " and p = " << p << ": " << error << endl; }
     return error;
 }
