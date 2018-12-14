@@ -167,16 +167,13 @@ void RunVerifications() {
     cout << "Integration Points Verification - B_P1:" << endl;
     cout << "  Point 1: " << intPoints2[0] << endl;
     cout << B_P1_int1.getPoints()[0] << ", ";
-    cout << B_P1_int1.getPoints()[1] << ", ";
-    cout << B_P1_int1.getPoints()[2] << ", " << endl;
+    cout << B_P1_int1.getPoints()[1] << ", " << endl << endl;
     cout << "  Point 2: " << intPoints2[1] << endl;
     cout << B_P1_int2.getPoints()[0] << ", ";
-    cout << B_P1_int2.getPoints()[1] << ", ";
-    cout << B_P1_int2.getPoints()[2] << ", " << endl;
+    cout << B_P1_int2.getPoints()[1] << ", " << endl << endl;
     cout << "  Point 3: " << intPoints2[2] << endl;
     cout << B_P1_int3.getPoints()[0] << ", ";
-    cout << B_P1_int3.getPoints()[1] << ", ";
-    cout << B_P1_int3.getPoints()[2] << ", " << endl;
+    cout << B_P1_int3.getPoints()[1] << ", " << endl << endl;
     
     BSpline B_P2_int1(2, intPoints[0]);
     BSpline B_P2_int2(2, intPoints[1]);
@@ -185,15 +182,15 @@ void RunVerifications() {
     cout << "  Point 1: " << intPoints2[0] << endl;
     cout << B_P2_int1.getPoints()[0] << ", ";
     cout << B_P2_int1.getPoints()[1] << ", ";
-    cout << B_P2_int1.getPoints()[2] << ", " << endl;
+    cout << B_P2_int1.getPoints()[2] << ", " << endl << endl;
     cout << "  Point 2: " << intPoints2[1] << endl;
     cout << B_P2_int2.getPoints()[0] << ", ";
     cout << B_P2_int2.getPoints()[1] << ", ";
-    cout << B_P2_int2.getPoints()[2] << ", " << endl;
+    cout << B_P2_int2.getPoints()[2] << ", " << endl << endl;
     cout << "  Point 3: " << intPoints2[2] << endl;
     cout << B_P2_int3.getPoints()[0] << ", ";
     cout << B_P2_int3.getPoints()[1] << ", ";
-    cout << B_P2_int3.getPoints()[2] << ", " << endl;
+    cout << B_P2_int3.getPoints()[2] << ", " << endl << endl;
     
     BSpline B_P3_int1(3, intPoints[0]);
     BSpline B_P3_int2(3, intPoints[1]);
@@ -202,27 +199,18 @@ void RunVerifications() {
     cout << "  Point 1: " << intPoints2[0] << endl;
     cout << B_P3_int1.getPoints()[0] << ", ";
     cout << B_P3_int1.getPoints()[1] << ", ";
-    cout << B_P3_int1.getPoints()[2] << ", " << endl;
+    cout << B_P3_int1.getPoints()[2] << ", ";
+    cout << B_P3_int1.getPoints()[3] << ", " << endl << endl;
     cout << "  Point 2: " << intPoints2[1] << endl;
     cout << B_P3_int2.getPoints()[0] << ", ";
     cout << B_P3_int2.getPoints()[1] << ", ";
-    cout << B_P3_int2.getPoints()[2] << ", " << endl;
+    cout << B_P3_int2.getPoints()[2] << ", ";
+    cout << B_P3_int2.getPoints()[3] << ", " << endl << endl;
     cout << "  Point 3: " << intPoints2[2] << endl;
     cout << B_P3_int3.getPoints()[0] << ", ";
     cout << B_P3_int3.getPoints()[1] << ", ";
-    cout << B_P3_int3.getPoints()[2] << ", " << endl;
-    
-//    BSpline B_P2_int(2, intPoints2[0]);
-//    cout << "Integration Points Verification - B_P2:" << endl;
-//    cout << B_P2_int.getPoints()[0] << " ";
-//    cout << B_P2_int.getPoints()[1] << " ";
-//    cout << B_P2_int.getPoints()[2] << " " << endl << endl;
-//
-//    cout << "Integration Points Verification - DB_P2:" << endl;
-//    DBSpline DB_P2_int(2, intPoints2[0]);
-//    cout << DB_P2_int.getPoints()[0] << " ";
-//    cout << DB_P2_int.getPoints()[1] << " ";
-//    cout << DB_P2_int.getPoints()[2] << " " << endl << endl;
+    cout << B_P3_int3.getPoints()[2] << ", ";
+    cout << B_P3_int3.getPoints()[3] << ", " << endl << endl;
     
     ofstream IP1_domainOut("IP_domain1.csv");
     ofstream IP2_domainOut("IP_domain2.csv");
