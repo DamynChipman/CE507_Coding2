@@ -42,9 +42,7 @@ float RunCase(int n, int p) {
     for (int i = 0; i < p+1; i++) {
         for (int j = 0; j < N[n]; j++) {
             LM[i][j] = ID[IEN[i][j]];
-            //cout << LM[i][j] << " ";
         }
-        //cout << endl;
     }
     if (VERBOSE) {
         cout << "LM array: " << endl;
@@ -61,7 +59,7 @@ float RunCase(int n, int p) {
         cout << endl;
     }
     
-    // Run Assembly Algorithm FE1D ====================================================
+    // Set Up and Run Assembly Algorithm FE1D ====================================================
     cout << "   calculating coefs..." << endl;
     int NE = N[n];                                        // Number of elements
     NELEM = NE;                                           // Global scope
@@ -92,17 +90,17 @@ float RunCase(int n, int p) {
         }
         cout << endl;
     }
+    // Run FE1D
+    Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, knotVector, NKNOTS, w, intPoints, del_e);
     
-    //Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, k_update, f_update, knotVector, w, del_e);
-    Eigen::VectorXf d = FE1D(LM, p, NE, NINT, f_x, knotVector, NKNOTS, w, intPoints, del_e); // Run FE1D
-    
-    // Generate solutions ===============================================================
-    cout << "   generating solutions..." << endl;
-    
-    
-    
-    // Calculate error ==================================================================
-    cout << "   calculating error..." << endl;
+    // Post-Processing =============================================================================
+    cout << "   post-processing..." << endl;
+    ofstream globalDomainOut("globalDomain.csv");
+    ofstream N_P2_a1Out("N_P2_a1.csv");
+    ofstream N_P2_a2Out("N_P2_a2.csv");
+    ofstream N_P2_a3Out("N_P2_a3.csv");
+    ofstream u_FEOut("u_FE.csv");
+
     float error = 0.0;
     for (int e = 0; e < NE; e++) {
         float u_FE[NE];
@@ -138,13 +136,22 @@ float RunCase(int n, int p) {
                 x_xi = x_xi + x_A*Np_vec(A);
             }
             u_ACT = u_actual(x_xi);
+
+            if (OUTPUT) {
+                globalDomainOut << x_xi << ",";
+                N_P2_a1Out << Np_vec(0) << ",";
+                N_P2_a2Out << Np_vec(1) << ",";
+                N_P2_a3Out << Np_vec(2) << ",";
+                u_FEOut << u_FE[i] << ",";
+            }
+            //cout << "a = 1: " << Np_vec(0) << "  a = 2: " << Np_vec(1) << "  a = 3: " << Np_vec(2) << endl;
+            cout << "x_xi = " << x_xi << "   u_FE[" << i << "] = " << u_FE[i] << "   u_ACT = " << u_ACT << endl;
             
             // Sum the error
             error += pow(abs(u_ACT - u_FE[i]),2) * (del_e/2) * w(i);
         }
     }
-    VERBOSE = true;
-    if (VERBOSE) { cout << "Calculated Error: " << error << endl; }
+    if (VERBOSE) { cout << "Calculated Error for n = " << n << " and p = " << p << ": " << error << endl; }
     return error;
 }
 

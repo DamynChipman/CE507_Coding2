@@ -5,8 +5,9 @@
 //   PROJECT:   CE507_Coding2
 
 // ----- GLOBAL VARIABLES -----
-bool VERBOSE = false;                 // Option for printing information
-bool VERIFY = false;                 // Option for verifying cases
+bool VERBOSE = true;                 // Option for printing information
+bool VERIFY = true;                  // Option for verifying cases
+bool OUTPUT = true;                  // Option for outputing results to CSV
 int NNODES = 20;                     // Number of nodes per elements
 int NELEM;                           // Number of elements
 int N[4] = {10, 100, 1000, 10000};   // Number of elements array
@@ -53,9 +54,10 @@ int main() {
     if (VERIFY) { cout << "   running verifications..." << endl; RunVerifications(); }
     
     // Run case
-    int n = 3;             // Number of elements index
-    int p = 3;             // BSpline order
+    int n = 0;             // Number of elements index
+    int p = 2;             // BSpline order
     float error = RunCase(n,p);
+    cout << "Error = " << error << endl;
     
     return 0;
 }

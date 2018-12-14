@@ -137,6 +137,7 @@ Eigen::VectorXf FE1D(int** LM, int p, int NE, int NINT, float (*f)(float), Eigen
     K.setFromTriplets(coefs.begin(), coefs.end());
     Eigen::SimplicialCholesky<SpMat> chol(K);
     Eigen::VectorXf d = chol.solve(F);
+    d(NE-1) = 0.0;
     
     if (VERBOSE) {
         cout << endl << "K: " << endl << K << endl;
